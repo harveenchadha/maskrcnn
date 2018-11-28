@@ -1,0 +1,2 @@
+python3 garbage_det.py detect --weights='./mask_rcnn_garbage_0010.h5' --image='14.jpg'
+
