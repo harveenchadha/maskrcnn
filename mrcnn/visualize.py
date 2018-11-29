@@ -106,19 +106,19 @@ def display_instances(image, boxes, masks, class_ids, class_names,
 
     # If no axis is passed, create one and automatically call show()
     auto_show = False
-    if not ax:
-        _, ax = plt.subplots(1, figsize=figsize)
-        auto_show = True
+#     if not ax:
+#         _, ax = plt.subplots(1, figsize=figsize)
+#         auto_show = True
 
     # Generate random colors
     colors = colors or random_colors(N)
 
     # Show area outside image boundaries.
     height, width = image.shape[:2]
-    ax.set_ylim(height + 10, -10)
-    ax.set_xlim(-10, width + 10)
-    ax.axis('off')
-    ax.set_title(title)
+#     ax.set_ylim(height + 10, -10)
+#     ax.set_xlim(-10, width + 10)
+#     ax.axis('off')
+#     ax.set_title(title)
 
     masked_image = image.astype(np.uint32).copy()
     for i in range(N):
@@ -133,7 +133,7 @@ def display_instances(image, boxes, masks, class_ids, class_names,
             p = patches.Rectangle((x1, y1), x2 - x1, y2 - y1, linewidth=2,
                                 alpha=0.7, linestyle="dashed",
                                 edgecolor=color, facecolor='none')
-            ax.add_patch(p)
+#             ax.add_patch(p)
 
         # Label
         if not captions:
@@ -144,8 +144,8 @@ def display_instances(image, boxes, masks, class_ids, class_names,
             caption = "{} {:.3f}".format(label, score) if score else label
         else:
             caption = captions[i]
-        ax.text(x1, y1 + 8, caption,
-                color='w', size=11, backgroundcolor="none")
+#         ax.text(x1, y1 + 8, caption,
+#                 color='w', size=11, backgroundcolor="none")
 
         # Mask
         mask = masks[:, :, i]
@@ -178,10 +178,10 @@ def display_instances(image, boxes, masks, class_ids, class_names,
             # Subtract the padding and flip (y, x) to (x, y)
             verts = np.fliplr(verts) - 1
             p = Polygon(verts, facecolor="none", edgecolor=color)
-            ax.add_patch(p)
-    ax.imshow(masked_image.astype(np.uint8))
-    if True:
-        plt.show()
+#             ax.add_patch(p)
+#     ax.imshow(masked_image.astype(np.uint8))
+#     if True:
+#         plt.show()
 
     return masked_image
 
