@@ -220,26 +220,47 @@ def get_ax(rows=1, cols=1, size=16):
     _, ax = plt.subplots(rows, cols, figsize=(size*cols, size*rows))
     return ax
 
+import os
 
 #Detection on new image
-def detect_and_save(model, image_path=None, video_path=None):
+def detect_and_save(model1, image_path=None, video_path=None):
     
     assert image_path or video_path
 
     if image_path:
+#         image = skimage.io.imread(args.image)
+#         r = model.detect([image], verbose=1)[0]
         
         #loading the image and detecting
-        image = skimage.io.imread(args.image)
+        image = skimage.io.imread(image_path)
+        class InferenceConfig(CustomConfig):
+            GPU_COUNT = 1
+            IMAGES_PER_GPU = 1
+        config = InferenceConfig()
+        config.display()
+        model = modellib.MaskRCNN(mode="inference", config =config, model_dir = DEFAULT_LOGS_DIR)
+        print(model)
+        model.load_weights('./mask_rcnn_garbage_0010.h5', by_name=True)
         r = model.detect([image], verbose=1)[0]
+        
 
-        ax = get_ax(1)
+#         ax = get_ax(1)
         final_image=display_instances(image, r['rois'], r['masks'], r['class_ids'], 
-                            class_names, r['scores'], ax=ax,
+                            class_names, r['scores'], 
                             title="Predictions")	
         
         #save the output
-        file_name = "predction_{:%Y%m%dT%H%M%	S}.png".format(datetime.datetime.now())        
+        file_name = "prediction_{:%Y%m%dT%H%M}.jpg".format(datetime.datetime.now())
+        score = r['scores']
         skimage.io.imsave(file_name, final_image)
+        if(len(score)!=0 ):
+          if(score[0] < 0.5):
+            return False
+          else:
+            return True
+        else:
+          return False
+        
 
     elif video_path:
         import cv2
@@ -276,7 +297,7 @@ def detect_and_save(model, image_path=None, video_path=None):
         vwriter.release()
     print("Saved to ", file_name)
 
-
+ 
 if __name__ == '__main__':
     import argparse
 
@@ -365,6 +386,7 @@ if __name__ == '__main__':
     elif args.command == "detect":
         detect_and_save(model, image_path=args.image,
                                 video_path=args.video)
+        #return ret
     else:
         print("'{}' is not recognized. "
               "Use 'train' or 'detect	'".format(args.command))
